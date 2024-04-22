@@ -1,0 +1,46 @@
+body,
+html {
+  width: 100vw;
+  height: 100vh;
+  /* overflow: hidden; */
+}
+
+#css2dRender,
+#city_map {
+  position: fixed;
+  top: calc((100vh - (100vw * (9 / 16))) / 2);
+  z-index: 1;
+  width: 100vw;
+  height: calc(100vw * (9 / 16));
+}
+#css2dRender {
+  /* 一定要加这个属性，不然2D内容点击没效果 */
+  pointer-events: none;
+}
+.build_tag {
+  width: 20px;
+  height: 20px;
+  color: #fff;
+  line-height: 20px;
+  text-align: center;
+  background: #777777;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.build_tag {
+  /* 一定要加这个属性，不然2D内容点击没效果 */
+  pointer-events: all;
+}
+.build_tag:hover {
+  color: #22b7f2;
+  background: #fff;
+  border-color: #22b7f2;
+}
+
+li {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}

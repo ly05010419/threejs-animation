@@ -1,0 +1,29 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+/* 将3d视图浮动起来 */
+#threeMain {
+    position: fixed;
+    top: 0;
+    left: 0;
+    
+}
+body {
+    overflow: hidden auto;
+}
+[id^=scene_] {
+    width: 100vw;
+    height: 100vh;
+    margin: auto;
+}
+#scene_1 {
+    background: rgb(255, 243, 189);
+}
+#scene_2 {
+    background-color: #131c2a;
+    background-image: linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px), linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+    background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px;
+    background-attachment: fixed;
+}
