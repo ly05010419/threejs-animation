@@ -27,10 +27,13 @@ const initAmmojs = () => {
             mouse.y = -(event.clientY / document.body.offsetHeight) * 2 + 1;
             raycaster.setFromCamera(mouse, camera);
             var raylist = raycaster.intersectObjects(vehicle.children);
-
-            const mesh = raylist[0].object
-            mesh.visible = false
-            console.log(mesh)
+            console.log(raylist)
+            if(raylist.length>1){
+                const mesh = raylist[0].object
+                mesh.visible = false
+                console.log(mesh)
+            }
+           
         });
         const { group, chassisMesh } = createVehicle(new THREE.Vector3(0, 4, 0), new THREE.Quaternion(0, 0, 0, 1), physicsWorld, vehicle)
         scene.add(group)

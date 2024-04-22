@@ -7,30 +7,17 @@ import { loadGltf } from '../src/ts/loaders'
 import * as THREE from 'three'
 let controls, helperGroup = new THREE.Group(), PlaneSize = 1000, textureLoader = new THREE.TextureLoader();
 
-scene.add(...[hemiLight, dirLight])
-const helper = new THREE.DirectionalLightHelper(dirLight, 50);
-helperGroup.add(helper);
+scene.add(...[hemiLight])
 
 scene.add(helperGroup)
 
 // camera.position.set(4, 2, 1)
 // camera.lookAt(0, 0, 0)
 
-// 主角当前动画 
-let playerActiveAction: any = null
-// 主角上一次动画
-let previousAction: any = null
-// 主角所有的动画
-let actions: any = []
-// 主角的动画器
-let playerMixer: THREE.AnimationMixer
 // 更新主角时钟
 const playerClock = new THREE.Clock();
 
 let XBot: any
-
-let cone: THREE.Object3D
-let actionNames = ['idle', 'walk', 'run']
 
 const XBotSize = new THREE.Vector3();
 const box = new THREE.Box3()
@@ -57,7 +44,7 @@ const init = async () => {
     window.addEventListener('resize', onWindowResize);
 
     createObjects()
-    createMesh()
+    
     loadPlayer()
 
     document.addEventListener('keydown', onKeyDown);
@@ -65,13 +52,7 @@ const init = async () => {
 
 }
 
-function createMesh() {
-    const geometry = new THREE.CylinderGeometry(0, 0.1, 0.3, 12);
-    geometry.rotateX(Math.PI / 2);
-    const material = new THREE.MeshNormalMaterial();
-    cone = new THREE.Mesh(geometry, material);
-    scene.add(cone);
-}
+
 
 const loadPlayer = async () => {
     const xbot: any = await loadGltf('../src/assets/models/Xbot.glb')
@@ -82,47 +63,14 @@ const loadPlayer = async () => {
     box.getSize(XBotSize)
 
     XBot.position.set(0, 0, 0)
-    // const skeleton = new THREE.SkeletonHelper(XBot);
-    // skeleton.visible = true;
-    // helperGroup.add(skeleton);
+    
     // XBot.add(camera)
-    XBot.traverse((bot: THREE.Mesh) => {
-        // console.log(bot.name);
-        if (bot.isMesh) bot.castShadow = true;
-    })
-    const animations = xbot.animations
-
-    playerMixer = new THREE.AnimationMixer(XBot);
-
-    for (let i = 0; i < animations.length; i++) {
-
-        const clip = animations[i];
-
-        const action = playerMixer.clipAction(clip);
-
-        action.clampWhenFinished = true;
-
-        actions[clip.name] = action
-        
-
-        createHandleButton(clip.name)
-    }
-
-    playerActiveAction = actions['idle'];
-
-    playerActiveAction.play();
-
-    // XBot.rotation.set(0, Math.PI * 0.2, 0)
-
-    // console.log();
 
     controls = new PointerLockControls(XBot, document.body);
     controls.maxPolarAngle = Math.PI * 0.5
     controls.minPolarAngle = Math.PI * 0.5
     document.body.addEventListener('click', function () {
-
         controls.lock();
-
     });
 
     scene.add(XBot)
@@ -145,20 +93,17 @@ async function createObjects() {
     });
     plane.rotation.set(-0.5 * Math.PI, 0, 0);
     scene.add(plane)
-
-
-
 }
+
 function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
 }
-function render() {
-    const dt = playerClock.getDelta();
-    if (playerMixer) playerMixer.update(dt);
 
-    if ( cone && XBot) {
+function render() {
+    
+    if (XBot) {
         let xbotV3 = new THREE.Vector3();
 
         XBot.getWorldPosition(xbotV3);
@@ -172,13 +117,10 @@ function render() {
         camera.lookAt(xbotV3.clone().setY(XBotSize.y))
         camera.updateProjectionMatrix()
 
-        // updateControls()
-
     }
     // 更新控制器
     renderer.render(scene, camera);
 }
-
 
 const onKeyUp = function (event) {
 
@@ -186,28 +128,28 @@ const onKeyUp = function (event) {
 
         case 'KeyA':
             if (moveLeft&&controls.isLocked) {
-                fadeToAction('idle')
+                // fadeToAction('idle')
              }
              moveLeft = false;
              break;
         case 'KeyD':
             if (moveRight&&controls.isLocked) {
-               fadeToAction('idle')
+               // fadeToAction('idle')
             }
             moveRight = false;
             break;
         case 'KeyW':
             if (moveForward&&controls.isLocked) {
-               fadeToAction('idle')
+               // fadeToAction('idle')
             }
             moveForward = false;
             break;
          case 'KeyS':
              if (moveBackward&&controls.isLocked) {
-               fadeToAction('idle')
+               // fadeToAction('idle')
             }
             moveBackward = false;
-            break;
+               break;
     }
 
 
@@ -217,26 +159,26 @@ const onKeyDown = function (event) {
     switch (event.code) {
 
         case 'KeyA':
-            if (!moveLeft&&controls.isLocked) {
-                fadeToAction('walk')
+            if (moveLeft&&controls.isLocked) {
+                // fadeToAction('idle')
              }
              moveLeft = true;
              break;
         case 'KeyW':
             if (!moveForward&&controls.isLocked) {
-                fadeToAction('walk')
+               // fadeToAction('run')
             }
             moveForward = true;
             break;
         case 'KeyS':
-            if (!moveBackward&&controls.isLocked) {
-                fadeToAction('walk')
+            if (moveBackward&&controls.isLocked) {
+               // fadeToAction('idle')
             }
             moveBackward = true;
             break;
         case 'KeyD':
-            if (!moveRight&&controls.isLocked) {
-                fadeToAction('walk')
+            if (moveRight&&controls.isLocked) {
+               // fadeToAction('idle')
             }
             moveRight = true;
             break;
@@ -267,53 +209,15 @@ function updateControls() {
     }
 
     prevTime = time;
-
 }
 
 // 循环渲染
 function animate() {
-
     requestAnimationFrame(animate);
     render();
 }
 
-/**
- * 
- * @param name 下一个动画名称
- * @param duration 过度时间
- */
-function fadeToAction(name: string, duration = 0.5) {
 
-    previousAction = playerActiveAction;
-    playerActiveAction = actions[name];
-    if (previousAction !== playerActiveAction) {
-        console.log('1');
-        previousAction.fadeOut(duration);
-    }
 
-    playerActiveAction
-        .reset()
-        .setEffectiveTimeScale(1)
-        .setEffectiveWeight(1)
-        .fadeIn(duration)
-        .play();
-
-}
-
-let offset = 120
-function createHandleButton(text: string) {
-    console.log('clip.name', text);
-    const index = actionNames.indexOf(text)
-    if (index !== -1) {
-        const button = document.createElement("button")
-        button.innerText = text
-        button.style.width = offset + 'px'
-        button.style.left = index * offset + 'px'
-        button.classList.add('handle-button')
-        document.body.appendChild(button)
-        button.onclick = () => fadeToAction(text)
-    }
-
-}
 init();
 animate();

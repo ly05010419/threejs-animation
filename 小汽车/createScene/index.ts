@@ -85,6 +85,7 @@ function initHelper() {
 function initControls() {
   controls = new OrbitControls(camera, renderer.domElement)
   controls.addEventListener('change', () => {
+    console.log('camera.position:')
     console.log(camera.position)
   })
 }
